@@ -28,29 +28,42 @@ def plot_gmm(gmm, X):
     ax.set_facecolor((1.0, 1, 1))
     labels = gmm.fit(X).predict(X)
 
-    ax.scatter(X[:, 0], X[:, 1], s=6, color='r',alpha=0.2)
+    ax.scatter(X[:, 0], X[:, 1], s=36, color='orange',linewidth=1,alpha=0.25)
     ax.set_xlim(-3,5)
-    ax.spines['bottom'].set_color('black')
+    ax.spines['bottom'].set_color('black') # 设置画框的底部的颜色
+    ax.spines['bottom'].set_linewidth(2.2) # 设置画框的底部的粗细
     ax.spines['left'].set_color('black')
+    ax.spines['left'].set_linewidth(2.2)
     ax.spines['top'].set_color('black')
+    ax.spines['top'].set_linewidth(2.2)
     ax.spines['right'].set_color('black')
-    ax.axis('equal')
-    ax.xaxis.grid(True,color='black',alpha=0.2)
-    ax.yaxis.grid(True,color='black',alpha=0.2)
-    w_factor1 = 0.7 / gmm.weights_.max()
-    w_factor2 = 0.15 / gmm.weights_.max()
+    ax.spines['right'].set_linewidth(2.2)
+    ax.axis('equal') # 正方形画框
+    ax.xaxis.grid(True,color='black',alpha=0.1,linestyle='-.')
+    ax.yaxis.grid(True,color='black',alpha=0.1,linestyle='-.')
+    w_factor1 = 0.9 / gmm.weights_.max()
+    w_factor2 = 0.1 / gmm.weights_.max()
     for pos, covar, w in zip(gmm.means_, gmm.covariances_, gmm.weights_):
-        draw_ellipse(pos, covar, alpha=w * w_factor1,color='green',fill=False)
-        draw_ellipse(pos, covar, alpha=w * w_factor2,color='green',fill=True)
+        draw_ellipse(pos, covar, alpha=w * w_factor1,color='#fc4e2a',fill=False,linewidth=2,linestyle='dotted')
+        draw_ellipse(pos, covar, alpha=w * w_factor2,color='#fc4e2a',fill=True)
+
+    plt.title("Extracted Feature") # 设置标题
+    plt.axis('square')
+    plt.xlim(-1.05,1.05) # 设置x轴的取值范围
+ 
+    from matplotlib.pyplot import MultipleLocator 
+    y_major_locator=MultipleLocator(0.5) # 设置y轴的刻度仅仅显示0.5的倍数
+    ax.yaxis.set_major_locator(y_major_locator)
+    plt.ylim(-1.05,1.05) # 设置y轴的取值范围
 
 if __name__ == '__main__':
-    X, y_true = make_blobs(n_samples=400, centers=2,
-cluster_std=0.60, random_state=0)
+    X, y_true = make_blobs(n_samples=400, centers=2,center_box=(-1,1),
+cluster_std=0.25, random_state=0)
     X = X[:, ::-1] # flip axes for better plotting
 
     gmm = GMM(n_components=2).fit(X)
     labels = gmm.predict(X)
-    # plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis')
+
     gmm = GMM(n_components=2, random_state=42)
     plot_gmm(gmm, X)
 
